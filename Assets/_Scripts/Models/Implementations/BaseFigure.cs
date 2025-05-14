@@ -5,7 +5,7 @@ using Helpers;
 
 namespace Models.Implementations
 {
-    public class FigureBase : MonoBehaviour, IFigure
+    public class BaseFigure : MonoBehaviour, IFigure
     {
         public FigureType Type => _type;
         
