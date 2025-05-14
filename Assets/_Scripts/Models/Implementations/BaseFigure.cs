@@ -2,6 +2,7 @@ using UnityEngine;
 using Models.Interfaces;
 using Models.Types;
 using Helpers;
+using UI;
 
 namespace Models.Implementations
 {
@@ -30,7 +31,7 @@ namespace Models.Implementations
 
         public void OnClick()
         {
-            Debug.Log($"Clicked on {_type.Shape} {_type.Animal}");
+            ActionBarSystem.Instance.AddFigure(this);
         }
 
         public bool Matches(IFigure other)
@@ -38,6 +39,11 @@ namespace Models.Implementations
             return _type.Shape == other.Type.Shape &&
                    _type.Animal == other.Type.Animal &&
                    _type.FrameColor.ToColorString() == other.Type.FrameColor.ToColorString();
+        }
+
+        private void OnMouseDown()
+        {
+            OnClick();
         }
     }
 }

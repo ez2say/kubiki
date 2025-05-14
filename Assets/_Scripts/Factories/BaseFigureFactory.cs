@@ -1,25 +1,26 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Models.Implementations;
-using Models.Interfaces;
 using Models.Types;
+using Models.Interfaces;
 
 namespace Factories
 {
-    public class BasicFigureFactory : IFigureFactory
+    public class BaseFigureFactory : IFigureFactory
     {
-        private readonly List<FigureType> _availableTypes = new();
-        private readonly GameObject _prefab;
+        private readonly List<FigureType> _availableTypes;
+        private readonly GameObject[] _prefabs;
 
-        public BasicFigureFactory(List<FigureType> availableTypes, GameObject prefab)
+        public BaseFigureFactory(List<FigureType> availableTypes, params GameObject[] prefabs)
         {
             _availableTypes = availableTypes;
-            _prefab = prefab;
+            _prefabs = prefabs;
         }
 
         public IFigure CreateFigure()
         {
-            var go = Object.Instantiate(_prefab);
+            var prefab = GetRandomPrefab(_prefabs);
+            var go = Object.Instantiate(prefab);
             var figure = go.GetComponent<BaseFigure>();
             var type = GetRandomType();
 
@@ -30,6 +31,11 @@ namespace Factories
         private FigureType GetRandomType()
         {
             return _availableTypes[Random.Range(0, _availableTypes.Count)];
+        }
+
+        private GameObject GetRandomPrefab(GameObject[] prefabs)
+        {
+            return prefabs[Random.Range(0, prefabs.Length)];
         }
     }
 }
