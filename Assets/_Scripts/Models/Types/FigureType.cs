@@ -7,9 +7,8 @@ namespace Models.Types
     {
         public ShapeType Shape;
         public Color FrameColor;
-        public AnimalType Animal;
+        public Sprite AnimalSprite;
     }
 
     public enum ShapeType { Circle, Square, Triangle }
-    public enum AnimalType { Lion, Tiger, Bear, Rabbit }
 }

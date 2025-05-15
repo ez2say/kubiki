@@ -4,38 +4,39 @@ using Services;
 using Factories;
 using Models.Types;
 
-namespace Services
+
+public class GridGenerator : MonoBehaviour
 {
-    public class GridGenerator : MonoBehaviour
+    [SerializeField] private GameObject circlePrefab;
+    [SerializeField] private GameObject squarePrefab;
+    [SerializeField] private GameObject trianglePrefab;
+    [SerializeField] private float dropDelay = 0.2f;
+    [SerializeField] private int figureCount = 9;
+    [SerializeField] private AnimalSprites _animalSprites;
+
+
+    private IFigureSpawner _spawner;
+
+    public void Initialize()
     {
-        [SerializeField] private GameObject circlePrefab;
-        [SerializeField] private GameObject squarePrefab;
-        [SerializeField] private GameObject trianglePrefab;
-        [SerializeField] private float dropDelay = 0.2f;
-        [SerializeField] private int figureCount = 9;
+        ITypeProvider typeProvider = new DefaultTypeProvider(_animalSprites);
 
-        private IFigureSpawner _spawner;
+        ISpawnPointProvider spawnPointProvider = new SceneSpawnPointProvider();
 
-        public void Initialize()
-        {
-            ITypeProvider typeProvider = new DefaultTypeProvider();
-            ISpawnPointProvider spawnPointProvider = new SceneSpawnPointProvider();
+        IFigureFactory factory = new BaseFigureFactory(
+            typeProvider.GetAvailableTypes(),
+            circlePrefab,
+            squarePrefab,
+            trianglePrefab
+        );
 
-            IFigureFactory factory = new BaseFigureFactory(
-                typeProvider.GetAvailableTypes(),
-                circlePrefab,
-                squarePrefab,
-                trianglePrefab
-            );
+        _spawner = new CoroutineFigureSpawner(
+            factory,
+            spawnPointProvider,
+            dropDelay,
+            figureCount
+        );
 
-            _spawner = new CoroutineFigureSpawner(
-                factory,
-                spawnPointProvider,
-                dropDelay,
-                figureCount
-            );
-
-            _spawner.SpawnFigures();
-        }
+        _spawner.SpawnFigures();
     }
 }

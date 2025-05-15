@@ -4,14 +4,16 @@ using Models.Types;
 using Helpers;
 using UI;
 
+
 namespace Models.Implementations
 {
     public class BaseFigure : MonoBehaviour, IFigure
     {
-        public FigureType Type => _type;
-        
         private FigureType _type;
+        [SerializeField] private SpriteRenderer shapeRenderer;
+        [SerializeField] private SpriteRenderer animalRenderer;
 
+        public FigureType Type => _type;
 
         public void Initialize(FigureType type)
         {
@@ -21,12 +23,11 @@ namespace Models.Implementations
 
         private void UpdateVisuals()
         {
-            SpriteRenderer renderer = GetComponent<SpriteRenderer>();
-            if (renderer != null)
-            {
-                renderer.color = _type.FrameColor;
-                Debug.Log($"Created: {_type.Shape} - {_type.Animal} - {_type.FrameColor.ToColorString()}");
-            }
+            if (shapeRenderer != null)
+                shapeRenderer.color = _type.FrameColor;
+
+            if (animalRenderer != null)
+                animalRenderer.sprite = _type.AnimalSprite;
         }
 
         public void OnClick()
@@ -37,8 +38,8 @@ namespace Models.Implementations
         public bool Matches(IFigure other)
         {
             return _type.Shape == other.Type.Shape &&
-                   _type.Animal == other.Type.Animal &&
-                   _type.FrameColor.ToColorString() == other.Type.FrameColor.ToColorString();
+                   _type.FrameColor.ToColorString() == other.Type.FrameColor.ToColorString() &&
+                   _type.AnimalSprite.name == other.Type.AnimalSprite.name;
         }
 
         private void OnMouseDown()

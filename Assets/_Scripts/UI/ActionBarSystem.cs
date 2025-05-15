@@ -56,7 +56,7 @@ namespace UI
                 .GroupBy(f => new
                 {
                     f.Type.Shape,
-                    f.Type.Animal,
+                    AnimalName = f.Type.AnimalSprite.name, // сравниваем по имени спрайта
                     Color = f.Type.FrameColor.ToColorString()
                 })
                 .Where(g => g.Count() >= 3)

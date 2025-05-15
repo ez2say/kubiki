@@ -9,7 +9,7 @@ namespace UI
 
         public void SetFigure(IFigure figure)
         {
-            iconRenderer.color = figure.Type.FrameColor;
+            iconRenderer.sprite = figure.Type.AnimalSprite;
 
         }
     }

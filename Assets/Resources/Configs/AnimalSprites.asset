@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2bd362ab66ba615419f1309e919e38b1, type: 3}
+  m_Name: AnimalSprites
+  m_EditorClassIdentifier: 
+  Lion: {fileID: 21300000, guid: 5a695d3bb5090eb4f9c527a7381d848d, type: 3}
+  Tiger: {fileID: 21300000, guid: fb17b5eacca3be1439b4e91e27056b1f, type: 3}
+  Bear: {fileID: 21300000, guid: e52e6ec026f251640861b1c27bba1910, type: 3}
+  Rabbit: {fileID: 21300000, guid: c2a44a07714983848b473d62d18162b2, type: 3}
