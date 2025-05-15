@@ -16,24 +16,16 @@ namespace Services
         public List<FigureType> GetAvailableTypes()
         {
             var result = new List<FigureType>();
+            ShapeType[] shapes = GenerateShapes();
+            Color[] colors = GenerateColors();
+            Sprite[] animals = GenerateAnimals();
+            CreateFigure(result, shapes, colors, animals);
 
-            ShapeType[] shapes = (ShapeType[])System.Enum.GetValues(typeof(ShapeType));
-            Color[] colors = new[]
-            {
-                Color.red,
-                Color.blue,
-                Color.green,
-                Color.yellow
-            };
+            return result;
+        }
 
-            Sprite[] animals = new[]
-            {
-                animalSprites.Lion,
-                animalSprites.Tiger,
-                animalSprites.Bear,
-                animalSprites.Rabbit
-            };
-
+        private static void CreateFigure(List<FigureType> result, ShapeType[] shapes, Color[] colors, Sprite[] animals)
+        {
             foreach (var shape in shapes)
             {
                 foreach (var color in colors)
@@ -49,8 +41,33 @@ namespace Services
                     }
                 }
             }
+        }
 
-            return result;
+        private Sprite[] GenerateAnimals()
+        {
+            return new[]
+                        {
+                animalSprites.Lion,
+                animalSprites.Tiger,
+                animalSprites.Bear,
+                animalSprites.Rabbit
+            };
+        }
+
+        private static Color[] GenerateColors()
+        {
+            return new[]
+                        {
+                Color.red,
+                Color.blue,
+                Color.green,
+                Color.yellow
+            };
+        }
+
+        private static ShapeType[] GenerateShapes()
+        {
+            return (ShapeType[])System.Enum.GetValues(typeof(ShapeType));
         }
     }
 }

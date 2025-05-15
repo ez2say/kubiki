@@ -15,12 +15,32 @@ namespace UI
         [SerializeField] private GameObject actionItemPrefab;
         [SerializeField] private int maxSlots = 7;
 
+        private int _matchCount = 0;
+        private const int MatchToThaw = 3;
+
         private List<IFigure> _figuresInBar = new();
+        private List<ActionBarItem> _actionBarSlots = new();
 
         private void Awake()
         {
             if (Instance == null) Instance = this;
             else Destroy(gameObject);
+
+            InitializeSlots();
+        }
+        private void InitializeSlots()
+        {
+            foreach (Transform child in barContainer)
+                Destroy(child.gameObject);
+
+            _actionBarSlots.Clear();
+
+            for (int i = 0; i < maxSlots; i++)
+            {
+                var go = Instantiate(actionItemPrefab, barContainer);
+                var item = go.GetComponent<ActionBarItem>();
+                _actionBarSlots.Add(item);
+            }
         }
 
         public void AddFigure(IFigure figure)
@@ -28,26 +48,29 @@ namespace UI
             if (_figuresInBar.Count >= maxSlots)
             {
                 Debug.Log("Бар заполнен! Вы проиграли.");
-                /*UIManager.Instance.ShowGameOver();*/
                 return;
             }
 
-            // Уничтожаем объект на поле
-            Destroy(((MonoBehaviour)figure).gameObject);
-
-            // Добавляем в бар
             _figuresInBar.Add(figure);
-            SpawnInBar(figure);
+            UpdateBar();
 
             CheckForMatch();
             CheckWinCondition();
         }
 
-        private void SpawnInBar(IFigure figure)
+        private void UpdateBar()
         {
-            var go = Instantiate(actionItemPrefab, barContainer);
-            var item = go.GetComponent<ActionBarItem>();
-            item.SetFigure(figure);
+            for (int i = 0; i < _actionBarSlots.Count; i++)
+            {
+                if (i < _figuresInBar.Count)
+                {
+                    _actionBarSlots[i].SetFigure(_figuresInBar[i]);
+                }
+                else
+                {
+                    _actionBarSlots[i].Clear(); // например, делает слот серым или прозрачным
+                }
+            }
         }
 
         private void CheckForMatch()
@@ -56,7 +79,7 @@ namespace UI
                 .GroupBy(f => new
                 {
                     f.Type.Shape,
-                    AnimalName = f.Type.AnimalSprite.name, // сравниваем по имени спрайта
+                    AnimalName = f.Type.AnimalSprite.name,
                     Color = f.Type.FrameColor.ToColorString()
                 })
                 .Where(g => g.Count() >= 3)
@@ -64,17 +87,26 @@ namespace UI
 
             if (grouped.Count > 0)
             {
+                _matchCount++;
+
                 foreach (var matched in grouped[0].Take(3))
                 {
+                    matched.OnMatch();
                     _figuresInBar.Remove(matched);
                 }
 
-                // Пересоздаём интерфейс
-                foreach (Transform child in barContainer)
-                    Destroy(child.gameObject);
+                if (_matchCount >= MatchToThaw)
+                {
+                    foreach (var fig in _figuresInBar)
+                    {
+                        if (fig is FrozenFigureDecorator frozen)
+                            frozen.Thaw();
+                    }
+                    _matchCount = 0;
+                }
 
-                foreach (var figure in _figuresInBar)
-                    SpawnInBar(figure);
+                UpdateBar();
+
             }
         }
 

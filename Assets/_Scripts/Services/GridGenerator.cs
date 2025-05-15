@@ -14,7 +14,6 @@ public class GridGenerator : MonoBehaviour
     [SerializeField] private int figureCount = 9;
     [SerializeField] private AnimalSprites _animalSprites;
 
-
     private IFigureSpawner _spawner;
 
     public void Initialize()
@@ -22,6 +21,8 @@ public class GridGenerator : MonoBehaviour
         ITypeProvider typeProvider = new DefaultTypeProvider(_animalSprites);
 
         ISpawnPointProvider spawnPointProvider = new SceneSpawnPointProvider();
+
+        ISpawnPositionStrategy spawnPositionStrategy = new RandomOffsetSpawnStrategy();
 
         IFigureFactory factory = new BaseFigureFactory(
             typeProvider.GetAvailableTypes(),
@@ -33,6 +34,8 @@ public class GridGenerator : MonoBehaviour
         _spawner = new CoroutineFigureSpawner(
             factory,
             spawnPointProvider,
+            spawnPositionStrategy,
+            this,
             dropDelay,
             figureCount
         );

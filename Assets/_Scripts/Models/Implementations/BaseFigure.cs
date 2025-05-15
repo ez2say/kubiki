@@ -4,7 +4,6 @@ using Models.Types;
 using Helpers;
 using UI;
 
-
 namespace Models.Implementations
 {
     public class BaseFigure : MonoBehaviour, IFigure
@@ -15,10 +14,18 @@ namespace Models.Implementations
 
         public FigureType Type => _type;
 
+        private bool _addedToBar = false;
+        public bool IsMatched { get; set; }
+
         public void Initialize(FigureType type)
         {
             _type = type;
             UpdateVisuals();
+        }
+
+        public Sprite GetShapeSprite()
+        {
+            return shapeRenderer?.sprite;
         }
 
         private void UpdateVisuals()
@@ -30,9 +37,28 @@ namespace Models.Implementations
                 animalRenderer.sprite = _type.AnimalSprite;
         }
 
-        public void OnClick()
+        public virtual void OnClick()
         {
+            if (_addedToBar) return;
+
             ActionBarSystem.Instance.AddFigure(this);
+            _addedToBar = true;
+
+            Destroy(gameObject); // <-- Удаление с поля
+        }
+
+        public virtual void OnFall()
+        {
+        }
+
+
+        public virtual void OnMatch()
+        {
+            if (!IsMatched)
+            {
+                IsMatched = true;
+                Destroy(gameObject);
+            }
         }
 
         public bool Matches(IFigure other)

@@ -10,6 +10,8 @@ namespace Services
     {
         private readonly IFigureFactory _figureFactory;
         private readonly ISpawnPointProvider _spawnPointProvider;
+        private readonly ISpawnPositionStrategy _positionStrategy;
+        private readonly MonoBehaviour _monoProvider;
         private readonly float _dropDelay;
         private readonly int _figureCount;
 
@@ -18,20 +20,22 @@ namespace Services
         public CoroutineFigureSpawner(
             IFigureFactory figureFactory,
             ISpawnPointProvider spawnPointProvider,
+            ISpawnPositionStrategy positionStrategy,
+            MonoBehaviour monoProvider,
             float dropDelay,
             int figureCount)
         {
             _figureFactory = figureFactory;
             _spawnPointProvider = spawnPointProvider;
+            _positionStrategy = positionStrategy;
+            _monoProvider = monoProvider;
             _dropDelay = dropDelay;
             _figureCount = figureCount;
         }
 
         public void SpawnFigures()
         {
-            MonoBehaviour mono = new GameObject("FigureSpawner").AddComponent<FigureSpawnerRunner>();
-
-            mono.StartCoroutine(SpawnCoroutine());
+            _monoProvider.StartCoroutine(SpawnCoroutine());
         }
 
         private IEnumerator SpawnCoroutine()
@@ -40,21 +44,20 @@ namespace Services
 
             for (int i = 0; i < _figureCount; i++)
             {
-                IFigure figure = _figureFactory.CreateFigure();
+                var specialType = SpecialTypeGenerator.GetRandom();
+                IFigure figure = _figureFactory.CreateFigure(specialType);
 
                 _spawnedFigures.Add(figure);
 
                 if (figure is MonoBehaviour mb)
                 {
-                    float randomXOffset = Random.Range(-0.5f, 0.5f);
-                    Vector3 spawnPos = spawnPoint.position + Vector3.right * randomXOffset;
+                    Vector3 spawnPos = _positionStrategy.CalculateSpawnPosition(spawnPoint);
                     mb.transform.position = spawnPos;
+                    figure.OnFall();
                 }
 
                 yield return new WaitForSeconds(_dropDelay);
             }
         }
     }
-
-    internal class FigureSpawnerRunner : MonoBehaviour { }
 }
