@@ -2,6 +2,7 @@ using UnityEngine;
 using Models.Interfaces;
 using Models.Implementations;
 using Models.Types.Specials;
+using Services;
 
 namespace Models.Types
 {
@@ -38,10 +39,7 @@ namespace Models.Types
             }
         }
 
-        private void OnDestroy()
-        {
-            _inputHandler.UnsubscribeToClicks(OnFigureClicked);
-        }
+        private void OnDestroy() => _inputHandler.UnsubscribeToClicks(OnFigureClicked);
 
         private void ApplyDecorators(FigureSpecialType specialType)
         {

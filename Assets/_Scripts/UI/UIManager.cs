@@ -6,23 +6,26 @@ namespace UI
     {
         public static UIManager Instance;
 
-        [SerializeField] private GameObject victoryScreen;
-        [SerializeField] private GameObject gameOverScreen;
+        [SerializeField] private GameObject _victoryScreen;
+        [SerializeField] private GameObject _gameOverScreen;
 
         private void Awake()
         {
             if (Instance == null) Instance = this;
             else Destroy(gameObject);
+
+            _victoryScreen.SetActive(false);
+            _gameOverScreen.SetActive(false);
         }
 
         public void ShowVictory()
         {
-            victoryScreen.SetActive(true);
+            _victoryScreen.SetActive(true);
         }
 
         public void ShowGameOver()
         {
-            gameOverScreen.SetActive(true);
+            _gameOverScreen.SetActive(true);
         }
     }
 }

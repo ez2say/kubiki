@@ -11,10 +11,12 @@ public class GameInitializer : MonoBehaviour, IGameInitializer
     [SerializeField] private int figureCount = 9;
     [SerializeField] private AnimalSprites _animalSprites;
 
+
     private IFigureSpawner _spawner;
 
     public void Initialize()
     {
+        FieldCountManager.Instance.Reset();
 
         ITypeProvider typeProvider = new DefaultTypeProvider(_animalSprites);
 

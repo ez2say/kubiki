@@ -3,7 +3,7 @@ using Models.Interfaces;
 using Models.Types;
 using Helpers;
 using UI;
-
+using Services;
 
 namespace Models.Implementations
 {
@@ -47,7 +47,11 @@ namespace Models.Implementations
 
         public void OnFall() => Debug.Log("Base figure falling");
 
-        public void OnMatch() => Object.Destroy(_shapeRenderer.gameObject);
+        public void OnMatch()
+        {
+            Object.Destroy(_shapeRenderer.gameObject);
+            FieldCountManager.Instance.UnregisterFigure();
+        }
 
         public bool Matches(IFigure other)
         {

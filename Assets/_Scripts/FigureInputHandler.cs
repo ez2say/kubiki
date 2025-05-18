@@ -22,7 +22,22 @@ public class FigureInputHandler
 
     private void HandleClick(InputAction.CallbackContext context)
     {
-        Vector2 tapPosition = Mouse.current.position.ReadValue();
+        Vector2 tapPosition;
+
+        if (Touchscreen.current != null && Touchscreen.current.primaryTouch.press.isPressed)
+        {
+            tapPosition = Touchscreen.current.primaryTouch.position.ReadValue();
+        }
+        else if (Mouse.current != null)
+        {
+            tapPosition = Mouse.current.position.ReadValue();
+        }
+        else
+        {
+            Debug.Log("[Input] Устройство ввода не обнаружено");
+            return;
+        }
+
         Debug.Log($"[Input] Позиция клика: {tapPosition}");
 
         Ray ray = Camera.main.ScreenPointToRay(tapPosition);
@@ -31,9 +46,7 @@ public class FigureInputHandler
         if (hit.collider != null)
         {
             var figureSystem = hit.collider.GetComponent<FigureSystem>();
-
             IFigure figure = figureSystem?.GetFigure();
-
             OnFigureClickedEvent?.Invoke(figure);
         }
         else

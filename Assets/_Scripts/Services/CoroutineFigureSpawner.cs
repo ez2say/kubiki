@@ -42,6 +42,8 @@ namespace Services
 
             for (int i = 0; i < _figureCount; i++)
             {
+                FieldCountManager.Instance.RegisterFigure();
+
                 IFigureData data = _figureGenerator.GetNextFigureData();
 
                 if (data == null)

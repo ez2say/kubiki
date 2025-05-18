@@ -4,6 +4,7 @@ using UnityEngine;
 using Models.Interfaces;
 using Models.Types;
 using Models.Types.Specials;
+using Services;
 
 namespace UI
 {
@@ -45,18 +46,21 @@ namespace UI
 
         public void AddFigure(IFigure figure)
         {
-            if (_figuresInBar.Count >= maxSlots)
+            _figuresInBar.Add(figure);
+            Debug.Log($"[ActionBar] Фигура добавлена: {figure.GroupId}. Слотов занято: {_figuresInBar.Count}/{maxSlots}");
+
+            int figuresBeforeMatch = _figuresInBar.Count;
+
+            CheckForMatch();
+
+            if (figuresBeforeMatch == maxSlots && _figuresInBar.Count == maxSlots)
             {
-                Debug.Log("Бар заполнен! Вы проиграли.");
+                Debug.Log("Бар полностью заполнен без совпадений! Вы проиграли.");
+                OnGameOver();
                 return;
             }
 
-            _figuresInBar.Add(figure);
-
-            Debug.Log($"[ActionBar] Фигура добавлена: {figure.GroupId}");
             UpdateBar();
-
-            CheckForMatch();
             CheckWinCondition();
         }
 
@@ -126,11 +130,15 @@ namespace UI
 
         private void CheckWinCondition()
         {
-            /*if (GridGenerator.Instance.IsFieldEmpty() && _figuresInBar.Count == 0)
+            if (FieldCountManager.Instance.IsFieldEmpty() && _figuresInBar.Count == 0)
             {
                 Debug.Log("Вы победили!");
                 UIManager.Instance.ShowVictory();
-            }*/
+            }
+        }
+        private void OnGameOver()
+        {
+            UIManager.Instance.ShowGameOver();
         }
     }
 }
