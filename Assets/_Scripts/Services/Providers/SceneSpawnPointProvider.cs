@@ -1,5 +1,6 @@
+using Services.Interfaces;
 using UnityEngine;
-using Models.Interfaces;
+
 
 namespace Services
 {

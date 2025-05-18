@@ -4,73 +4,62 @@ using Models.Types;
 using Helpers;
 using UI;
 
+
 namespace Models.Implementations
 {
-    public class BaseFigure : MonoBehaviour, IFigure
+    public class BaseFigure : IFigure
     {
-        private FigureType _type;
-        [SerializeField] private SpriteRenderer shapeRenderer;
-        [SerializeField] private SpriteRenderer animalRenderer;
+        private readonly FigureType _type;
 
-        public FigureType Type => _type;
+        private readonly SpriteRenderer _shapeRenderer;
+        private readonly SpriteRenderer _animalRenderer;
 
-        private bool _addedToBar = false;
-        public bool IsMatched { get; set; }
+        private readonly GameObject _gameObject;
 
-        public void Initialize(FigureType type)
+
+        public string GroupId => $"{_type.Shape}_{ColorToString(_type.FrameColor)}_{_type.AnimalSprite.name}";
+
+        public BaseFigure(FigureType type, SpriteRenderer shapeRenderer, SpriteRenderer animalRenderer, GameObject gameObject)
         {
             _type = type;
+            _shapeRenderer = shapeRenderer;
+            _animalRenderer = animalRenderer;
+            _gameObject = gameObject;
+
+
             UpdateVisuals();
         }
 
-        public Sprite GetShapeSprite()
-        {
-            return shapeRenderer?.sprite;
-        }
+        public FigureType Type => _type;
+
 
         private void UpdateVisuals()
         {
-            if (shapeRenderer != null)
-                shapeRenderer.color = _type.FrameColor;
-
-            if (animalRenderer != null)
-                animalRenderer.sprite = _type.AnimalSprite;
+            if (_shapeRenderer != null) _shapeRenderer.color = _type.FrameColor;
+            if (_animalRenderer != null) _animalRenderer.sprite = _type.AnimalSprite;
         }
 
-        public virtual void OnClick()
+        public void OnClick()
         {
-            if (_addedToBar) return;
-
+            _gameObject.SetActive(false);
             ActionBarSystem.Instance.AddFigure(this);
-            _addedToBar = true;
-
-            Destroy(gameObject); // <-- Удаление с поля
         }
 
-        public virtual void OnFall()
-        {
-        }
+        public void OnFall() => Debug.Log("Base figure falling");
 
-
-        public virtual void OnMatch()
-        {
-            if (!IsMatched)
-            {
-                IsMatched = true;
-                Destroy(gameObject);
-            }
-        }
+        public void OnMatch() => Object.Destroy(_shapeRenderer.gameObject);
 
         public bool Matches(IFigure other)
         {
-            return _type.Shape == other.Type.Shape &&
-                   _type.FrameColor.ToColorString() == other.Type.FrameColor.ToColorString() &&
-                   _type.AnimalSprite.name == other.Type.AnimalSprite.name;
+            if (other == null) return false;
+            return GroupId == other.GroupId;
         }
 
-        private void OnMouseDown()
+        public Sprite GetShapeSprite() => _shapeRenderer.sprite;
+
+        public static string ColorToString(Color color, int decimals = 2)
         {
-            OnClick();
+            return $"{Mathf.Round(color.r * 100) / 100}_{Mathf.Round(color.g * 100) / 100}_{Mathf.Round(color.b * 100) / 100}";
         }
     }
 }

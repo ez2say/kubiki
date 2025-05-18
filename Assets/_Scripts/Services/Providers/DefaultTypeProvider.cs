@@ -1,4 +1,5 @@
 using Models.Types;
+using Services.Interfaces;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,11 +7,11 @@ namespace Services
 {
     public class DefaultTypeProvider : ITypeProvider
     {
-        [SerializeField] private AnimalSprites animalSprites;
+        private AnimalSprites _animalSprites;
 
         public DefaultTypeProvider(AnimalSprites sprites)
         {
-            animalSprites = sprites;
+            _animalSprites = sprites;
         }
 
         public List<FigureType> GetAvailableTypes()
@@ -32,12 +33,7 @@ namespace Services
                 {
                     foreach (var animal in animals)
                     {
-                        result.Add(new FigureType
-                        {
-                            Shape = shape,
-                            FrameColor = color,
-                            AnimalSprite = animal
-                        });
+                        result.Add(new FigureType(shape, color, animal));
                     }
                 }
             }
@@ -47,10 +43,10 @@ namespace Services
         {
             return new[]
                         {
-                animalSprites.Lion,
-                animalSprites.Tiger,
-                animalSprites.Bear,
-                animalSprites.Rabbit
+                _animalSprites.Lion,
+                _animalSprites.Tiger,
+                _animalSprites.Bear,
+                _animalSprites.Rabbit
             };
         }
 

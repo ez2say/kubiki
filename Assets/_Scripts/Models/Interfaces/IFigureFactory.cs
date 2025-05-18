@@ -1,9 +1,8 @@
-using Models.Types;
 
 namespace Models.Interfaces
 {
-    public interface IFigureFactory
+    public interface IFigureGenerator
     {
-        IFigure CreateFigure(FigureSpecialType specialType = FigureSpecialType.Normal);
+        IFigureData GetNextFigureData();
     }
 }

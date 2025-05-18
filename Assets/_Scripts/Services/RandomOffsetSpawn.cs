@@ -1,3 +1,4 @@
+using Services.Interfaces;
 using UnityEngine;
 
 namespace Services
@@ -6,8 +7,7 @@ namespace Services
     {
         public Vector3 CalculateSpawnPosition(Transform spawnPoint)
         {
-            float randomXOffset = Random.Range(-0.5f, 0.5f);
-            return spawnPoint.position + Vector3.right * randomXOffset;
+            return spawnPoint.position ;
         }
     }
 }

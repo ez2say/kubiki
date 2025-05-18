@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Models.Types;
 
-namespace Services
+namespace Services.Interfaces
 {
     public interface ITypeProvider
     {

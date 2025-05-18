@@ -2,30 +2,28 @@ using System.Collections;
 using UnityEngine;
 using Models.Interfaces;
 using Models.Types;
-using System.Collections.Generic;
+using Services.Interfaces;
 
 namespace Services
 {
     public class CoroutineFigureSpawner : IFigureSpawner
     {
-        private readonly IFigureFactory _figureFactory;
+        private readonly IFigureGenerator _figureGenerator;
         private readonly ISpawnPointProvider _spawnPointProvider;
         private readonly ISpawnPositionStrategy _positionStrategy;
         private readonly MonoBehaviour _monoProvider;
         private readonly float _dropDelay;
         private readonly int _figureCount;
 
-        private List<IFigure> _spawnedFigures = new();
-
         public CoroutineFigureSpawner(
-            IFigureFactory figureFactory,
+            IFigureGenerator figureGenerator,
             ISpawnPointProvider spawnPointProvider,
             ISpawnPositionStrategy positionStrategy,
             MonoBehaviour monoProvider,
             float dropDelay,
             int figureCount)
         {
-            _figureFactory = figureFactory;
+            _figureGenerator = figureGenerator;
             _spawnPointProvider = spawnPointProvider;
             _positionStrategy = positionStrategy;
             _monoProvider = monoProvider;
@@ -44,15 +42,26 @@ namespace Services
 
             for (int i = 0; i < _figureCount; i++)
             {
-                var specialType = SpecialTypeGenerator.GetRandom();
-                IFigure figure = _figureFactory.CreateFigure(specialType);
+                IFigureData data = _figureGenerator.GetNextFigureData();
 
-                _spawnedFigures.Add(figure);
+                if (data == null)
+                    yield break;
 
-                if (figure is MonoBehaviour mb)
+                Vector3 spawnPos = _positionStrategy.CalculateSpawnPosition(spawnPoint);
+
+                var go = Object.Instantiate(data.Prefab, spawnPos, Quaternion.identity);
+
+                var figureSystem = go.GetComponent<FigureSystem>();
+
+                if (figureSystem != null)
                 {
-                    Vector3 spawnPos = _positionStrategy.CalculateSpawnPosition(spawnPoint);
-                    mb.transform.position = spawnPos;
+                    figureSystem.Initialize(data.Type, data.SpecialType);
+                }
+
+                IFigure figure = go.GetComponent<IFigure>();
+
+                if (figure != null)
+                {
                     figure.OnFall();
                 }
 

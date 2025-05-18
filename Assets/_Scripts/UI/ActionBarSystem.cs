@@ -2,8 +2,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Models.Interfaces;
-using Helpers;
-using Services;
+using Models.Types;
+using Models.Types.Specials;
 
 namespace UI
 {
@@ -52,6 +52,8 @@ namespace UI
             }
 
             _figuresInBar.Add(figure);
+
+            Debug.Log($"[ActionBar] ‘игура добавлена: {figure.GroupId}");
             UpdateBar();
 
             CheckForMatch();
@@ -68,7 +70,7 @@ namespace UI
                 }
                 else
                 {
-                    _actionBarSlots[i].Clear(); // например, делает слот серым или прозрачным
+                    _actionBarSlots[i].Clear();
                 }
             }
         }
@@ -76,38 +78,50 @@ namespace UI
         private void CheckForMatch()
         {
             var grouped = _figuresInBar
-                .GroupBy(f => new
-                {
-                    f.Type.Shape,
-                    AnimalName = f.Type.AnimalSprite.name,
-                    Color = f.Type.FrameColor.ToColorString()
-                })
+                .GroupBy(f => f.GroupId)
                 .Where(g => g.Count() >= 3)
                 .ToList();
 
             if (grouped.Count > 0)
             {
-                _matchCount++;
-
-                foreach (var matched in grouped[0].Take(3))
+                foreach (var group in grouped)
                 {
-                    matched.OnMatch();
-                    _figuresInBar.Remove(matched);
-                }
+                    var matchedGroup = group.Take(3).ToList();
 
-                if (_matchCount >= MatchToThaw)
-                {
-                    foreach (var fig in _figuresInBar)
+                    foreach (var figure in matchedGroup)
                     {
-                        if (fig is FrozenFigureDecorator frozen)
-                            frozen.Thaw();
+                        figure.OnMatch();
+                        _figuresInBar.Remove(figure);
                     }
-                    _matchCount = 0;
+
+                    _matchCount++;
+
+                    if (_matchCount >= MatchToThaw)
+                    {
+                        ThawAllFrozenFigures();
+                        _matchCount = 0;
+                    }
                 }
 
                 UpdateBar();
-
             }
+        }
+
+        private void ThawAllFrozenFigures()
+        {
+            var allFigureSystems = FindObjectsOfType<FigureSystem>();
+
+            foreach (var figureSystem in allFigureSystems)
+            {
+                var figure = figureSystem.GetFigure();
+
+                if (figure is FrozenFigureDecorator frozenFigure)
+                {
+                    frozenFigure.Thaw();
+                }
+            }
+
+            Debug.Log("¬се фигурки разморожены!");
         }
 
         private void CheckWinCondition()

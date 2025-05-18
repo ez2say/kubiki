@@ -6,8 +6,8 @@ namespace UI
 {
     public class ActionBarItem : MonoBehaviour
     {
-        [SerializeField] private Image shapeImage;   // <-- Проставь в инспекторе
-        [SerializeField] private Image animalImage; // <-- Проставь в инспекторе
+        [SerializeField] private Image shapeImage;
+        [SerializeField] private Image animalImage;
 
         public void SetFigure(IFigure figure)
         {

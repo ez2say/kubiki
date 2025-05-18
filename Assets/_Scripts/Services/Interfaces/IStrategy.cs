@@ -1,7 +1,7 @@
 using Models.Types;
 using System.Collections.Generic;
 
-namespace Services
+namespace Services.Interfaces
 {
     public interface IFigureTypeGenerationStrategy
     {

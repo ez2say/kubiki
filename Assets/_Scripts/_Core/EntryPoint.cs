@@ -1,14 +1,21 @@
 using UnityEngine;
-
+using Services.Interfaces;
+using UnityEngine.SceneManagement;
 
 public class EntryPoint : MonoBehaviour
 {
-    private GridGenerator gridGenerator;
+    private IGameInitializer _gameInitializer;
 
 
     private void Start()
     {
-        gridGenerator = GetComponent<GridGenerator>();
-        gridGenerator.Initialize();
+        _gameInitializer = gameObject.GetComponent<IGameInitializer>();
+
+        _gameInitializer.Initialize();
+    }
+
+    public void Restart()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }
